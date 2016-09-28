@@ -5,6 +5,8 @@ variables:
     type: array
     default:
       - rds-short-backup-retention-period
+      - rds-no-auto-minor-version-upgrade
+      - rds-db-publicly-accessible
   AUDIT_AWS_RDS_ALERT_RECIPIENT:
     description: email recipient for notification
     required: true
