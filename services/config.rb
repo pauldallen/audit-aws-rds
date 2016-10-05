@@ -38,7 +38,7 @@ coreo_aws_advisor_alert "rds-db-publicly-accessible" do
   objectives ["db_instances"]
   audit_objects ["db_instances.publicly_accessible"]
   operators ["=="]
-  alert_when [false]
+  alert_when [true]
 end
 
 coreo_aws_advisor_rds "advise-rds" do
