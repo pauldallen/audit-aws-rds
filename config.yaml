@@ -17,11 +17,6 @@ variables:
     required: true
     type: string
     default: false
-  AUDIT_AWS_RDS_PAYLOAD_TYPE:
-    description: json or text
-    required: true
-    type: string
-    default: "json"
   AUDIT_AWS_RDS_SEND_ON:
     description: always or change
     required: true
