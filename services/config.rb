@@ -58,7 +58,7 @@ coreo_uni_util_notify "advise-rds" do
   "number_of_violations":"STACK::coreo_aws_advisor_rds.advise-rds.number_violations",
   "number_violations_ignored":"STACK::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
   "violations": STACK::coreo_aws_advisor_rds.advise-rds.report }'
-  payload_type "${AUDIT_AWS_RDS_PAYLOAD_TYPE}"
+  payload_type "json"
   endpoint ({
       :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on INSTANCE::stack_name :: INSTANCE::name'
   })
