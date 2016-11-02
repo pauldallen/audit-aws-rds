@@ -1,6 +1,6 @@
 variables:
   AUDIT_AWS_RDS_ALERT_LIST:
-    description: alert list for generating notifications
+    description: Which alerts would you like to check for? (Default is all RDS alerts)
     required: true
     type: array
     default:
@@ -8,22 +8,22 @@ variables:
       - rds-no-auto-minor-version-upgrade
       - rds-db-publicly-accessible
   AUDIT_AWS_RDS_ALERT_RECIPIENT:
-    description: email recipient for notification
+    description: Enter the email address(es) that will receive notifications. If more than one, separate each with a comma.
     required: true
     type: string
     default:
   AUDIT_AWS_RDS_ALLOW_EMPTY:
-    description: receive empty reports?
+    description: Would you like to receive empty reports? Options - true / false. Default is false.
     required: true
     type: string
     default: false
   AUDIT_AWS_RDS_SEND_ON:
-    description: always or change
+    description: Send reports always or only when there is a change? Options - always / change. Default is change.
     required: true
     type: string
     default: "change"
   AUDIT_AWS_RDS_REGIONS:
-    description: list of AWS regions to check. Default is all regions
+    description: List of AWS regions to check. Default is us-east-1,us-west-1,us-west-2.
     required: true
     type: array
     default:
