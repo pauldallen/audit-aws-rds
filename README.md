@@ -15,25 +15,25 @@ This repo is designed to work with CloudCoreo. It will monitor RDS against best 
 ## Required variables with no default
 
 ### `AUDIT_AWS_RDS_ALERT_RECIPIENT`:
-  * description: email recipient for notification
+  * description: Enter the email address(es) that will receive notifications. If more than one, separate each with a comma.
 
 
 ## Required variables with default
 
 ### `AUDIT_AWS_RDS_ALERT_LIST`:
-  * description: alert list for generating notifications
+  * description: Which alerts would you like to check for? (Default is all RDS alerts)
   * default: rds-short-backup-retention-period, rds-no-auto-minor-version-upgrade, rds-db-publicly-accessible
 
 ### `AUDIT_AWS_RDS_ALLOW_EMPTY`:
-  * description: receive empty reports?
+  * description: Would you like to receive empty reports? Options - true / false. Default is false.
   * default: false
 
 ### `AUDIT_AWS_RDS_SEND_ON`:
-  * description: always or change
+  * description: Send reports always or only when there is a change? Options - always / change. Default is change.
   * default: change
 
 ### `AUDIT_AWS_RDS_REGIONS`:
-  * description: list of AWS regions to check. Default is all regions
+  * description: List of AWS regions to check. Default is us-east-1,us-west-1,us-west-2.
   * default: us-east-1, us-west-1, us-west-2
 
 
