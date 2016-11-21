@@ -1,4 +1,3 @@
-
 coreo_aws_advisor_alert "rds-short-backup-retention-period" do
   action :define
   service :rds
@@ -47,22 +46,22 @@ end
 coreo_aws_advisor_rds "advise-rds" do
   alerts ${AUDIT_AWS_RDS_ALERT_LIST}
   action :advise
-  regions ${AUDIT_AWS_RDS_REGIONS}
+  regions ${AUDIT_AWS_REGIONS}
 end
 
 coreo_uni_util_notify "advise-rds" do
   action :notify
   type 'email'
-  allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
-  send_on "${AUDIT_AWS_RDS_SEND_ON}"
-  payload '{"stack name":"PLAN::stack_name",
-  "instance name":"PLAN::name",
+  allow_empty ${AUDIT_AWS_ALLOW_EMPTY}
+  send_on "${AUDIT_AWS_SEND_ON}"
+  payload '{"composite name":"PLAN::stack_name",
+  "plan name":"PLAN::name",
   "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
   "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
   "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
   "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report }'
   payload_type "json"
   endpoint ({
-      :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
+      :to => '${AUDIT_AWS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
   })
 end
