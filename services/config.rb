@@ -79,7 +79,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.0.7"
+                   :version => "1.0.8"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
@@ -89,7 +89,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditRDS = new CloudCoreoJSRunner(json_input, false, "${AUDIT_AWS_RDS_ALERT_NO_OWNER_RECIPIENT}", "${AUDIT_AWS_RDS_OWNER_TAG}");
+const AuditRDS = new CloudCoreoJSRunner(json_input, false, "${AUDIT_AWS_RDS_ALERT_NO_OWNER_RECIPIENT}", "${AUDIT_AWS_RDS_OWNER_TAG}", 'rds');
 const notifiers = AuditRDS.getNotifiers();
 callback(notifiers);
   EOH
