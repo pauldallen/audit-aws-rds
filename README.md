@@ -77,5 +77,5 @@ This repo is designed to work with CloudCoreo. It will monitor RDS against best 
 
 
 ## Icon
-
+![icon](https://raw.githubusercontent.com/CloudCoreo/audit-aws-rds/master/images/icon.png "icon")
 
