@@ -8,10 +8,15 @@ variables:
       - rds-no-auto-minor-version-upgrade
       - rds-db-publicly-accessible
   AUDIT_AWS_RDS_ALERT_RECIPIENT:
-    description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
+    description: "Enter the email address(es) that will receive rollup report and json. If more than one, separate each with a comma."
     required: true
     type: string
     default:
+  AUDIT_AWS_RDS_ALERT_RECIPIENT_2:
+      description: "Enter the email address(es) that will receive notifications. If more than one, separate each with a comma."
+      required: true
+      type: string
+      default:
   AUDIT_AWS_RDS_ALLOW_EMPTY:
     description: "Would you like to receive empty reports? Options - true / false. Default is false."
     required: true

@@ -90,20 +90,53 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   function <<-EOH
   
 const JSON = json_input;
-const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT}";
+const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT_2}";
 const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
+const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
+const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
 const AUDIT_NAME = 'rds';
-const IS_KILL_SCRIPTS_SHOW = false;
+
+const ARE_KILL_SCRIPTS_SHOWN = false;
 const EC2_LOGIC = ''; // you can choose 'and' or 'or';
-const EXPECTED_TAGS = [];
+const EXPECTED_TAGS = ['example_2', 'example_1'];
+
+const WHAT_NEED_TO_SHOWN = {
+    OBJECT_ID: {
+        headerName: 'AWS Object ID',
+        isShown: true,
+    },
+    REGION: {
+        headerName: 'Region',
+        isShown: true,
+    },
+    AWS_CONSOLE: {
+        headerName: 'AWS Console',
+        isShown: true,
+    },
+    TAGS: {
+        headerName: 'Tags',
+        isShown: true,
+    },
+    AMI: {
+        headerName: 'AMI',
+        isShown: false,
+    },
+    KILL_SCRIPTS: {
+        headerName: 'Kill Cmd',
+        isShown: false,
+    }
+};
 
 const VARIABLES = {
-    'NO_OWNER_EMAIL': NO_OWNER_EMAIL,
-    'OWNER_TAG': OWNER_TAG,
-    'AUDIT_NAME': AUDIT_NAME,
-    'IS_KILL_SCRIPTS_SHOW': IS_KILL_SCRIPTS_SHOW,
-    'EC2_LOGIC': EC2_LOGIC,
-    'EXPECTED_TAGS': EXPECTED_TAGS
+    NO_OWNER_EMAIL,
+    OWNER_TAG,
+    AUDIT_NAME,
+    ARE_KILL_SCRIPTS_SHOWN,
+    EC2_LOGIC,
+    EXPECTED_TAGS,
+    WHAT_NEED_TO_SHOWN,
+    ALLOW_EMPTY,
+    SEND_ON
 };
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
@@ -119,13 +152,21 @@ coreo_uni_util_jsrunner "tags-rollup-rds" do
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
   function <<-EOH
 var rollup_string = "";
+let rollup = '';
+let emailText = '';
+let numberOfViolations = 0;
 for (var entry=0; entry < json_input.length; entry++) {
-  console.log(json_input[entry]);
-  if (json_input[entry]['endpoint']['to'].length) {
-    console.log('got an email to rollup');
-    rollup_string = rollup_string + "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
-  }
+    if (json_input[entry]['endpoint']['to'].length) {
+        numberOfViolations += parseInt(json_input[entry]['num_violations']);
+        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+    }
 }
+
+rollup += 'number of Violations: ' + numberOfViolations + "\\n";
+rollup += 'Rollup' + "\\n";
+rollup += emailText;
+
+rollup_string = rollup;
 callback(rollup_string);
   EOH
 end
