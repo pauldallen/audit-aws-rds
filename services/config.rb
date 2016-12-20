@@ -185,10 +185,7 @@ coreo_uni_util_notify "advise-rds-rollup" do
 composite name: PLAN::stack_name
 plan name: PLAN::name
 number_of_checks: COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks
-number_of_violations: COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations
 number_violations_ignored: COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations
-
-rollup report:
 COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-rds.return
   '
   payload_type 'text'
