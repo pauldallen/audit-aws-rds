@@ -57,7 +57,7 @@ end
   HTML SEND METHOD
 =end
 coreo_uni_util_notify "advise-rds-json" do
-  action :nothing
+  action :notify
   type 'email'
   allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_RDS_SEND_ON}'
@@ -79,7 +79,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.2.5"
+                   :version => "1.2.5@latest"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
