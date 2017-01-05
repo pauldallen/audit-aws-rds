@@ -7,7 +7,7 @@ coreo_aws_advisor_alert "rds-short-backup-retention-period" do
   description "The affected RDS database has a short backup retention period (less than 30 days)."
   category "Dataloss"
   suggested_action "Modify the backup retension period to increase it to greater than 30 days."
-  level "Alert"
+  level "Warning"
   objectives ["db_instances"]
   audit_objects ["db_instances.backup_retention_period"]
   operators ["<"]
