@@ -79,13 +79,10 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.2.6"
+                   :version => "1.3.8"
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
-                "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
-                "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
   
@@ -184,8 +181,6 @@ coreo_uni_util_notify "advise-rds-rollup" do
   payload '
 composite name: PLAN::stack_name
 plan name: PLAN::name
-number_of_checks: COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks
-number_violations_ignored: COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations
 COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-rds.return
   '
   payload_type 'text'
