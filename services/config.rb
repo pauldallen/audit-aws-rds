@@ -12,6 +12,7 @@ coreo_aws_advisor_alert "rds-short-backup-retention-period" do
   audit_objects ["db_instances.backup_retention_period"]
   operators ["<"]
   alert_when [30]
+  id_map "modifiers.parameter_group_name"
 end
 
 coreo_aws_advisor_alert "rds-no-auto-minor-version-upgrade" do
@@ -27,6 +28,7 @@ coreo_aws_advisor_alert "rds-no-auto-minor-version-upgrade" do
   audit_objects ["db_instances.auto_minor_version_upgrade"]
   operators ["=="]
   alert_when [false]
+  id_map "modifiers.parameter_group_name"
 end
 
 coreo_aws_advisor_alert "rds-db-publicly-accessible" do
@@ -42,6 +44,7 @@ coreo_aws_advisor_alert "rds-db-publicly-accessible" do
   audit_objects ["db_instances.publicly_accessible"]
   operators ["=="]
   alert_when [true]
+  id_map "modifiers.parameter_group_name"
 end
 
 coreo_aws_advisor_rds "advise-rds" do
