@@ -228,6 +228,17 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
 
                         var tags = null;
                         tags = json_input.violations[violator_id].tags;
+                        var tags_str = "";
+                        for (tag in tags) {
+                            var this_tag = tags[tag];
+                            var key = this_tag["key"];
+                            var value = this_tag["value"];
+                            tags_str = tags_str + " " + key + "=" + value;
+                        }
+                        tags_str = tags_str.replace(/^ /, "");
+
+                        re = /__TAGS__/gi;
+                        resolved_entry = resolved_entry.replace(re, tags_str);
                         
                         re = /\\+([^+]+)\\+/;
                         var match;
