@@ -1,0 +1,4 @@
+suppressions:
+  not-a-rule:
+    - not-an-object
+
