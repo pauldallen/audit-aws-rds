@@ -73,10 +73,10 @@ coreo_uni_util_jsrunner "rds-aggregate" do
   action :run
   json_input '{"composite name":"PLAN::stack_name",
   "plan name":"PLAN::name",
-  "number_of_checks":"COMPOSITE::coreo_aws_advisor_cloudtrail.advise-cloudtrail.number_checks",
-  "number_of_violations":"COMPOSITE::coreo_aws_advisor_cloudtrail.advise-cloudtrail.number_violations",
-  "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_cloudtrail.advise-cloudtrail.number_ignored_violations",
-  "violations":COMPOSITE::coreo_aws_advisor_cloudtrail.advise-cloudtrail.report}'
+  "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
+  "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
+  "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
+  "violations":COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
 var_regions = "${AUDIT_AWS_RDS_REGIONS}";
