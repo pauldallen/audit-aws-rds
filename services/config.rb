@@ -273,12 +273,12 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
 EOH
 end
 
-coreo_uni_util_variables "update-advisor-output" do
-  action :set
-  variables([
-       {'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return.violations'}
-      ])
-end
+# coreo_uni_util_variables "update-advisor-output" do
+#   action :set
+#   variables([
+#        {'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return.violations'}
+#       ])
+# end
 
 =begin
   START AWS RDS METHODS
