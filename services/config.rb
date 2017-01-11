@@ -229,17 +229,22 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
                         var tags = null;
                         tags = json_input.violations[violator_id].tags;
                         var tags_str = "";
+                        var tags_key_str = "";
                         for (tag in tags) {
                             var this_tag = tags[tag];
                             var key = this_tag["key"];
                             var value = this_tag["value"];
                             tags_str = tags_str + " " + key + "=" + value;
+                            tags_key_str = tags_key_str + " " + key;
                         }
                         tags_str = tags_str.replace(/^ /, "");
+                        tags_key_str = tags_key_str.replace(/^ /, "");
 
                         re = /__TAGS__/gi;
                         resolved_entry = resolved_entry.replace(re, tags_str);
-                        
+                        re = /__TAGKEYS__/gi;
+                        resolved_entry = resolved_entry.replace(re, tags_key_str);
+
                         re = /\\+([^+]+)\\+/;
                         var match;
                         while (match = re.exec(resolved_entry)) {
@@ -252,9 +257,7 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
                             resolved_entry = resolved_entry.replace(match[0], resolved);
 
                         }
-                        if (!result[rule_id]["rows"][col_num]) {
-                            result[rule_id]["rows"][col_num] = {};
-                        }
+
                         this_row = this_row + "," + resolved_entry;
 
                         col_num++;
@@ -266,6 +269,9 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
                     var row_num = result[rule_id]["nrows"];
                     var row_num_str = row_num.toString();
 
+                    if (!result[rule_id]["rows"][row_num_str]) {
+                        result[rule_id]["rows"][row_num_str] = {};
+                    }
 
                     this_row = this_row.replace(/^,/, "");
                     result[rule_id]["rows"][row_num_str] = this_row;
@@ -275,6 +281,7 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
             }
         }
     }
+
 
     var rtn = result;
 
