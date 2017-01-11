@@ -1,16 +1,19 @@
 rds-short-backup-retention-period:
-  "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
+  "RDS Instance": "__OBJECT__~https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
+  "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
-  "RDS Instance": "__OBJECT__#https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
 rds-no-auto-minor-version-upgrade:
-  "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
+  "RDS Instance": "__OBJECT__~https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
+  "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
-  "RDS Instance": "__OBJECT__#https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
 rds-db-publicly-accessible:
-  "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
+  "RDS Instance": "__OBJECT__~https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
+  "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
-  "RDS Instance": "__OBJECT__#https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
 rds-inventory:
-   "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
-   "AWS Tags": "__TAGS__"
-   "RDS Instance": "__OBJECT__#https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
+  "RDS Instance": "__OBJECT__~https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
+  "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
+  "Engine Type": "+__OBJECT__.violations.__RULE__.violating_object.0.object.engine+"
+  "Engine Version": "+__OBJECT__.violations.__RULE__.violating_object.0.object.engine_version+"
+  "Instance Type": "+__OBJECT__.violations.__RULE__.violating_object.0.object.db_instance_class+"
+  "AWS Tags": "__TAGS__"
