@@ -1,10 +1,13 @@
-cloudtrail-inventory:
-  "Trail Name": "__OBJECT__#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+#/configuration/+__OBJECT__.violations.__RULE__.violating_object.0.object.trail_arn+"
-  "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
+rds-short-backup-retention-period:
+  "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
 #  "AWS Tags": "+__OBJECT__.tags+"
-cloudtrail-service-disabled:
+#  "Trail Name": "__OBJECT__#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+#/configuration/+__OBJECT__.violations.__RULE__.violating_object.0.object.trail_arn+"
+rds-no-auto-minor-version-upgrade:
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
-no-global-trails:
+#  "AWS Tags": "+__OBJECT__.tags+"
+rds-db-publicly-accessible:
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
-
-# CloudTrail tags are not coming out of the engine currently so can't ask for them until that is fixed.
+#  "AWS Tags": "+__OBJECT__.tags+"
+rds-inventory:
+  "AWS Region": "+__OBJECT__.violations.__RULE__.region+#https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+"
+#  "AWS Tags": "+__OBJECT__.tags+"
