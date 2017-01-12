@@ -79,45 +79,28 @@ coreo_uni_util_variables "planwide" do
       ])
 end
 
-# section 5: 
+# section 5: primary service advisor
+
 coreo_aws_advisor_rds "advise-rds" do
   alerts ${AUDIT_AWS_RDS_ALERT_LIST}
   action :advise
   regions ${AUDIT_AWS_RDS_REGIONS}
 end
 
-coreo_uni_util_jsrunner "rds-aggregate" do
-  action :run
-  json_input '{"composite name":"PLAN::stack_name",
-  "plan name":"PLAN::name",
-  "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
-  "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
-  "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
-  "violations":COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
-  function <<-EOH
-
-var_regions = "${AUDIT_AWS_RDS_REGIONS}";
-
-var result = {};
-result['composite name'] = json_input['composite name'];
-result['plan name'] = json_input['plan name'];
-result['number_of_checks'] = json_input['number_of_checks'];
-result['number_of_violations'] = json_input['number_of_violations'];
-result['number_violations_ignored'] = json_input['number_violations_ignored'];
-result['regions'] = var_regions;
-result['violations'] = json_input['violations'];
-
-var myVarName = 'paulallen';
-coreoExport(`${myVarName}`, 'this is it man');
-
-callback(result);
-  EOH
+coreo_uni_util_variables "planwide" do
+  action :set
+  variables([
+       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_aws_advisor_rds.report'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'COMPOSITE::coreo_aws_advisor_rds.number_violations'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.composite_name' => 'PLAN::stack_name'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.plan_name' => 'PLAN::name'}
+      ])
 end
 
 coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
   action :run
   provide_composite_access true
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.rds-aggregate.return'
+  json_input 'COMPOSITE::coreo_uni_util_variables.planwide.results'
   packages([
                {
                    :name => "js-yaml",
@@ -142,12 +125,12 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
     result["regions"] = json_input["regions"];
     result["violations"] = {};
 
-    for (var violator_id in json_input.violations) {
+    for (var violator_id in json_input) {
         result["violations"][violator_id] = {};
-        result["violations"][violator_id].tags = json_input.violations[violator_id].tags;
+        result["violations"][violator_id].tags = json_input[violator_id].tags;
         result["violations"][violator_id].violations = {}
         //console.log(violator_id);
-        for (var rule_id in json_input.violations[violator_id].violations) {
+        for (var rule_id in json_input[violator_id].violations) {
             console.log("object " + violator_id + " violates rule " + rule_id);
             is_violation = true;
             for (var suppress_rule_id in suppressions) {
@@ -165,7 +148,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
             }
             if (is_violation) {
                 console.log("    +++ not suppressed - including in results");
-                result["violations"][violator_id].violations[rule_id] = json_input.violations[violator_id].violations[rule_id];
+                result["violations"][violator_id].violations[rule_id] = json_input[violator_id].violations[rule_id];
             }
         }
     }
@@ -178,10 +161,17 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
 EOH
 end
 
+coreo_uni_util_variables "planwide" do
+  action :set
+  variables([
+       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.results'}
+      ])
+end
+
 coreo_uni_util_jsrunner "jsrunner-output-table" do
   action :run
   provide_composite_access true
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return'
+  json_input 'COMPOSITE::coreo_uni_util_variables.planwide.results'
   packages([
                {
                    :name => "js-yaml",
@@ -217,8 +207,8 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
 
     var result = {};
 
-    for (var violator_id in json_input.violations) {
-        for (var rule_id in json_input.violations[violator_id].violations) {
+    for (var violator_id in json_input) {
+        for (var rule_id in json_input[violator_id].violations) {
             console.log("object " + violator_id + " violates rule " + rule_id);
             if (result[rule_id]) {
             } else {
@@ -247,7 +237,7 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
                         resolved_entry = resolved_entry.replace(re, rule_id);
 
                         var tags = null;
-                        tags = json_input.violations[violator_id].tags;
+                        tags = json_input[violator_id].tags;
                         var tags_str = "";
                         var tags_key_str = "";
                         for (tag in tags) {
@@ -270,7 +260,7 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
                         while (match = re.exec(resolved_entry)) {
                             console.log(match);
                             var to_resolve = match[1];
-                            var resolved = Object.byString(json_input.violations, to_resolve);
+                            var resolved = Object.byString(json_input, to_resolve);
                             if (resolved && resolved.match(/arn:aws/)) {
                                 resolved = resolved.replace("/", "@");
                             }
@@ -310,6 +300,15 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
 
 EOH
 end
+
+coreo_uni_util_variables "planwide" do
+  action :set
+  variables([
+       {'COMPOSITE::coreo_uni_util_variables.planwide.display' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-output-table.report'}
+      ])
+end
+
+
 
 # coreo_uni_util_variables "update-advisor-output" do
 #   action :set
