@@ -90,8 +90,8 @@ end
 coreo_uni_util_variables "planwide" do
   action :set
   variables([
-       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_aws_advisor_rds.report'},
-       {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'COMPOSITE::coreo_aws_advisor_rds.number_violations'},
+       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report'},
+       {'COMPOSITE::coreo_uni_util_variables.planwide.number_violations' => 'COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations'},
        {'COMPOSITE::coreo_uni_util_variables.planwide.composite_name' => 'PLAN::stack_name'},
        {'COMPOSITE::coreo_uni_util_variables.planwide.plan_name' => 'PLAN::name'}
       ])
