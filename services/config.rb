@@ -1,3 +1,6 @@
+
+# section 1: user-visible engine-powered rule definitions
+
 coreo_aws_advisor_alert "rds-inventory" do
   action :define
   service :rds
@@ -63,6 +66,20 @@ coreo_aws_advisor_alert "rds-db-publicly-accessible" do
   id_map "object.db_instances.db_instance_identifier"
 end
 
+# section 2: user-visible jsrunner-powered rule definitions
+
+# section 3: internal-use engine-powered rule definitions
+
+# section 4: cross-resource variable holder
+
+coreo_uni_util_variables "planwide" do
+  action :set
+  variables([
+       {'COMPOSITE::coreo_uni_util_variables.planwide.initialized' => true}
+      ])
+end
+
+# section 5: 
 coreo_aws_advisor_rds "advise-rds" do
   alerts ${AUDIT_AWS_RDS_ALERT_LIST}
   action :advise
@@ -89,6 +106,9 @@ result['number_of_violations'] = json_input['number_of_violations'];
 result['number_violations_ignored'] = json_input['number_violations_ignored'];
 result['regions'] = var_regions;
 result['violations'] = json_input['violations'];
+
+var myVarName = 'paulallen';
+coreoExport(`${myVarName}`, 'this is it man');
 
 callback(result);
   EOH
@@ -130,9 +150,9 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
         for (var rule_id in json_input.violations[violator_id].violations) {
             console.log("object " + violator_id + " violates rule " + rule_id);
             is_violation = true;
-            for (var suppress_rule_id in suppressions["suppressions"]) {
-                for (var suppress_violator_id in suppressions["suppressions"][suppress_rule_id]) {
-                    var suppress_obj_id = suppressions["suppressions"][suppress_rule_id][suppress_violator_id];
+            for (var suppress_rule_id in suppressions) {
+                for (var suppress_violator_id in suppressions[suppress_rule_id]) {
+                    var suppress_obj_id = suppressions[suppress_rule_id][suppress_violator_id];
                     console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_obj_id);
                     if (rule_id === suppress_rule_id) {
                         console.log("    have a suppression for rule: " + rule_id);

@@ -1,9 +1,10 @@
-suppressions:
-  rds-short-backup-retention-period:
-    - put-your-object-id-here
-  rds-no-auto-minor-version-upgrade:
-    - put-your-object-id-here
-  rds-db-publicly-accessible:
-    - put-your-object-id-here
-  rds-inventory:
-    - put-your-object-id-here
+rds-short-backup-retention-period:
+  - put-your-object-id-here
+rds-no-auto-minor-version-upgrade:
+  - put-your-object-id-here-1
+    - put-your-object-id-expiration-time-here
+  - put-your-object-id-here-2
+rds-db-publicly-accessible:
+  - put-your-object-id-here
+rds-inventory:
+  - put-your-object-id-here
