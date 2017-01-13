@@ -196,7 +196,7 @@ end
 coreo_uni_util_variables "add-suppressions-to-results" do
   action :set
   variables([
-       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.result'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.report'}
       ])
 end
 
