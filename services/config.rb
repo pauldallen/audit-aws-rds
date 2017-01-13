@@ -196,7 +196,7 @@ end
 coreo_uni_util_variables "add-suppressions-to-results" do
   action :set
   variables([
-       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.report'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return'}
       ])
 end
 
@@ -336,7 +336,7 @@ end
 coreo_uni_util_variables "add-display-tables" do
   action :set
   variables([
-       {'COMPOSITE::coreo_uni_util_variables.planwide.display' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-output-table.report'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.display' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-output-table.return'}
       ])
 end
 
