@@ -112,7 +112,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
 
 // Get document, or throw exception on error
     try {
-        var suppressions = yaml.safeLoad(fs.readFileSync('./suppressions.yaml', 'utf8'));
+        var suppressions = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
         console.log(suppressions);
     } catch (e) {
         console.log(e);
@@ -231,7 +231,7 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
 
 // Get document, or throw exception on error
     try {
-        var tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
+        var tables = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
         console.log(tables);
     } catch (e) {
         console.log(e);
