@@ -119,36 +119,70 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
     }
 
     var result = {};
-    result["composite name"] = json_input["composite name"];
-    result["number_of_violations"] = json_input["number_of_violations"];
-    result["plan name"] = json_input["plan name"];
-    result["regions"] = json_input["regions"];
-    result["violations"] = {};
-
+    var file_date = null;
     for (var violator_id in json_input) {
-        result["violations"][violator_id] = {};
-        result["violations"][violator_id].tags = json_input[violator_id].tags;
-        result["violations"][violator_id].violations = {}
+        result[violator_id] = {};
+        result[violator_id].tags = json_input[violator_id].tags;
+        result[violator_id].violations = {}
         //console.log(violator_id);
         for (var rule_id in json_input[violator_id].violations) {
             console.log("object " + violator_id + " violates rule " + rule_id);
             is_violation = true;
+
+            result[violator_id].violations[rule_id] = json_input[violator_id].violations[rule_id];
             for (var suppress_rule_id in suppressions) {
-                for (var suppress_violator_id in suppressions[suppress_rule_id]) {
-                    var suppress_obj_id = suppressions[suppress_rule_id][suppress_violator_id];
-                    console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_obj_id);
-                    if (rule_id === suppress_rule_id) {
-                        console.log("    have a suppression for rule: " + rule_id);
-                        if (violator_id === suppress_obj_id) {
-                            console.log("    *** found violation to suppress: " + suppress_obj_id);
-                            is_violation = false;
+                for (var suppress_violator_num in suppressions[suppress_rule_id]) {
+                    for (var suppress_violator_id in suppressions[suppress_rule_id][suppress_violator_num]) {
+                        file_date = null;
+                        var suppress_obj_id_time = suppressions[suppress_rule_id][suppress_violator_num][suppress_violator_id];
+                        console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_violator_id);
+                        if (rule_id === suppress_rule_id) {
+                            console.log("    have a suppression for rule: " + rule_id);
+
+                                if (violator_id === suppress_violator_id) {
+                                    var now_date = new Date();
+
+                                    if (suppress_obj_id_time === "") {
+                                        suppress_obj_id_time = new Date();
+                                    } else {
+                                        file_date = suppress_obj_id_time;
+                                        suppress_obj_id_time = file_date;
+                                    }
+                                    var rule_date = new Date(suppress_obj_id_time);
+                                    if(isNaN(rule_date.getTime())) {
+                                        console.log("invalid date, setting expiration to time zero");
+                                        rule_date = new Date(0);
+                                    }
+
+                                    if(now_date <=rule_date){
+
+                                        console.log("    *** found violation to suppress: " + violator_id);
+                                        is_violation = false;
+
+                                        result[violator_id].violations[rule_id]["suppressed"] = true;
+                                        if (file_date != null) {
+                                            result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
+                                            result[violator_id].violations[rule_id]["suppression_expired"] = false;
+                                        }
+                                    }
+                                }
+                            }
+
                         }
                     }
+
                 }
             }
             if (is_violation) {
-                console.log("    +++ not suppressed - including in results");
-                result["violations"][violator_id].violations[rule_id] = json_input[violator_id].violations[rule_id];
+                console.log("    +++ not suppressed");
+
+                if (file_date !== null) {
+                    result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
+                    result[violator_id].violations[rule_id]["suppression_expired"] = true;
+                } else {
+                    result[violator_id].violations[rule_id]["suppression_expired"] = false;
+                }
+                result[violator_id].violations[rule_id]["suppressed"] = false;
             }
         }
     }
@@ -164,7 +198,7 @@ end
 coreo_uni_util_variables "planwide" do
   action :set
   variables([
-       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.results'}
+       {'COMPOSITE::coreo_uni_util_variables.planwide.results' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.result'}
       ])
 end
 
@@ -308,15 +342,6 @@ coreo_uni_util_variables "planwide" do
       ])
 end
 
-
-
-# coreo_uni_util_variables "update-advisor-output" do
-#   action :set
-#   variables([
-#        {'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return.violations'}
-#       ])
-# end
-
 =begin
   START AWS RDS METHODS
   JSON SEND METHOD
@@ -332,7 +357,7 @@ coreo_uni_util_notify "advise-rds-json" do
   "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
   "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
   "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
-  "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report }'
+  "violations": COMPOSITE::coreo_uni_util_variables.planwide.results }'
   payload_type "json"
   endpoint ({
       :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
@@ -349,7 +374,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                }       ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
+                "violations": COMPOSITE::coreo_uni_util_variables.planwide.results}'
   function <<-EOH
   
 const JSON = json_input;
