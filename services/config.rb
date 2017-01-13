@@ -139,35 +139,33 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
                         if (rule_id === suppress_rule_id) {
                             console.log("    have a suppression for rule: " + rule_id);
 
-                                if (violator_id === suppress_violator_id) {
-                                    var now_date = new Date();
+                            if (violator_id === suppress_violator_id) {
+                                var now_date = new Date();
 
-                                    if (suppress_obj_id_time === "") {
-                                        suppress_obj_id_time = new Date();
-                                    } else {
-                                        file_date = suppress_obj_id_time;
-                                        suppress_obj_id_time = file_date;
-                                    }
-                                    var rule_date = new Date(suppress_obj_id_time);
-                                    if(isNaN(rule_date.getTime())) {
-                                        console.log("invalid date, setting expiration to time zero");
-                                        rule_date = new Date(0);
-                                    }
+                                if (suppress_obj_id_time === "") {
+                                    suppress_obj_id_time = new Date();
+                                } else {
+                                    file_date = suppress_obj_id_time;
+                                    suppress_obj_id_time = file_date;
+                                }
+                                var rule_date = new Date(suppress_obj_id_time);
+                                if (isNaN(rule_date.getTime())) {
+                                    console.log("invalid date, setting expiration to time zero");
+                                    rule_date = new Date(0);
+                                }
 
-                                    if(now_date <=rule_date){
+                                if (now_date <= rule_date) {
 
-                                        console.log("    *** found violation to suppress: " + violator_id);
-                                        is_violation = false;
+                                    console.log("    *** found violation to suppress: " + violator_id);
+                                    is_violation = false;
 
-                                        result[violator_id].violations[rule_id]["suppressed"] = true;
-                                        if (file_date != null) {
-                                            result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
-                                            result[violator_id].violations[rule_id]["suppression_expired"] = false;
-                                        }
+                                    result[violator_id].violations[rule_id]["suppressed"] = true;
+                                    if (file_date != null) {
+                                        result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
+                                        result[violator_id].violations[rule_id]["suppression_expired"] = false;
                                     }
                                 }
                             }
-
                         }
                     }
 
