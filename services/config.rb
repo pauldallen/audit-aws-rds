@@ -406,7 +406,7 @@ const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
     undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditRDS = new CloudCoreoJSRunner(JSON, VARIABLES, TABLES);
+const AuditRDS = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES, TABLES);
 const notifiers = AuditRDS.getNotifiers();
 callback(notifiers);
   EOH
