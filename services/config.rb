@@ -159,7 +159,7 @@ EOH
 end
 
 coreo_uni_util_jsrunner "jsrunner-output-table" do
-  action :nothing
+  action :notify
   provide_composite_access true
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return'
   packages([
@@ -195,79 +195,79 @@ coreo_uni_util_jsrunner "jsrunner-output-table" do
         console.log(e);
     }
 
-    var result = {};
-
-    for (var violator_id in json_input.violations) {
-        for (var rule_id in json_input.violations[violator_id].violations) {
-            console.log("object " + violator_id + " violates rule " + rule_id);
-            if (result[rule_id]) {
-            } else {
-                result[rule_id] = {};
-                result[rule_id]["header"] = "";
-                result[rule_id]["nrows"] = 0;
-                result[rule_id]["rows"] = {};
-            }
-            for (var table_rule_id in tables) {
-                //console.log(table_rule_id);
-                if (rule_id === table_rule_id) {
-                    //console.log("found a table entry for rule: " + rule_id);
-                    var col_num = 0;
-                    var col_num_str = col_num.toString();
-                    var this_row = "";
-                    for (var table_entry in tables[table_rule_id]) {
-                        console.log("  " + table_entry + " is " + tables[table_rule_id][table_entry]);
-                        var indx = result[rule_id]["header"].indexOf(table_entry);
-                        if (result[rule_id]["header"].indexOf(table_entry) === -1) {
-                            result[rule_id]["header"] = result[rule_id]["header"] + "," + table_entry;
-                        }
-                        var resolved_entry = tables[table_rule_id][table_entry];
-                        var re = /__OBJECT__/gi;
-                        resolved_entry = resolved_entry.replace(re, violator_id);
-                        re = /__RULE__/gi;
-                        resolved_entry = resolved_entry.replace(re, rule_id);
-
-                        var tags = null;
-                        tags = json_input.violations[violator_id].tags;
-                        
-                        re = /\\+([^+]+)\\+/;
-                        var match;
-                        while (match = re.exec(resolved_entry)) {
-                            console.log(match);
-                            var to_resolve = match[1];
-                            var resolved = Object.byString(json_input.violations, to_resolve);
-                            if (resolved && resolved.match(/arn:aws/)) {
-                                resolved = resolved.replace("/", "@");
-                            }
-                            resolved_entry = resolved_entry.replace(match[0], resolved);
-
-                        }
-                        if (!result[rule_id]["rows"][col_num]) {
-                            result[rule_id]["rows"][col_num] = {};
-                        }
-                        this_row = this_row + "," + resolved_entry;
-
-                        col_num++;
-                        col_num_str = col_num.toString();
-
-                    }
-                    result[rule_id]["header"] = result[rule_id]["header"].replace(/^,/, "");
-
-                    var row_num = result[rule_id]["nrows"];
-                    var row_num_str = row_num.toString();
-
-
-                    this_row = this_row.replace(/^,/, "");
-                    result[rule_id]["rows"][row_num_str] = this_row;
-
-                    result[rule_id]["nrows"]++;
-                }
-            }
-        }
-    }
-
-    var rtn = result;
-
-    callback(result);
+    # var result = {};
+    # 
+    # for (var violator_id in json_input.violations) {
+    #     for (var rule_id in json_input.violations[violator_id].violations) {
+    #         console.log("object " + violator_id + " violates rule " + rule_id);
+    #         if (result[rule_id]) {
+    #         } else {
+    #             result[rule_id] = {};
+    #             result[rule_id]["header"] = "";
+    #             result[rule_id]["nrows"] = 0;
+    #             result[rule_id]["rows"] = {};
+    #         }
+    #         for (var table_rule_id in tables) {
+    #             //console.log(table_rule_id);
+    #             if (rule_id === table_rule_id) {
+    #                 //console.log("found a table entry for rule: " + rule_id);
+    #                 var col_num = 0;
+    #                 var col_num_str = col_num.toString();
+    #                 var this_row = "";
+    #                 for (var table_entry in tables[table_rule_id]) {
+    #                     console.log("  " + table_entry + " is " + tables[table_rule_id][table_entry]);
+    #                     var indx = result[rule_id]["header"].indexOf(table_entry);
+    #                     if (result[rule_id]["header"].indexOf(table_entry) === -1) {
+    #                         result[rule_id]["header"] = result[rule_id]["header"] + "," + table_entry;
+    #                     }
+    #                     var resolved_entry = tables[table_rule_id][table_entry];
+    #                     var re = /__OBJECT__/gi;
+    #                     resolved_entry = resolved_entry.replace(re, violator_id);
+    #                     re = /__RULE__/gi;
+    #                     resolved_entry = resolved_entry.replace(re, rule_id);
+    # 
+    #                     var tags = null;
+    #                     tags = json_input.violations[violator_id].tags;
+    # 
+    #                     re = /\\+([^+]+)\\+/;
+    #                     var match;
+    #                     while (match = re.exec(resolved_entry)) {
+    #                         console.log(match);
+    #                         var to_resolve = match[1];
+    #                         var resolved = Object.byString(json_input.violations, to_resolve);
+    #                         if (resolved && resolved.match(/arn:aws/)) {
+    #                             resolved = resolved.replace("/", "@");
+    #                         }
+    #                         resolved_entry = resolved_entry.replace(match[0], resolved);
+    # 
+    #                     }
+    #                     if (!result[rule_id]["rows"][col_num]) {
+    #                         result[rule_id]["rows"][col_num] = {};
+    #                     }
+    #                     this_row = this_row + "," + resolved_entry;
+    # 
+    #                     col_num++;
+    #                     col_num_str = col_num.toString();
+    # 
+    #                 }
+    #                 result[rule_id]["header"] = result[rule_id]["header"].replace(/^,/, "");
+    # 
+    #                 var row_num = result[rule_id]["nrows"];
+    #                 var row_num_str = row_num.toString();
+    # 
+    # 
+    #                 this_row = this_row.replace(/^,/, "");
+    #                 result[rule_id]["rows"][row_num_str] = this_row;
+    # 
+    #                 result[rule_id]["nrows"]++;
+    #             }
+    #         }
+    #     }
+    # }
+    # 
+    # var rtn = result;
+    # 
+    # callback(result);
 
 
 EOH
@@ -302,161 +302,161 @@ coreo_uni_util_notify "advise-rds-json" do
   })
 end
 
-coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
-  action :run
-  data_type "json"
-  packages([
-               {
-                   :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.4.8"
-               },
-               {
-                   :name => "js-yaml",
-                   :version => "3.7.0"
-               } ])
-  json_input '{ "composite name":"PLAN::stack_name",
-                "plan name":"PLAN::name",
-                "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
-  function <<-EOH
-  
-const fs = require('fs');
-const yaml = require('js-yaml');
-let tables;
-// Get document, or throw exception on error
-    try {
-        tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
-    } catch (e) {
-        console.log(e);
-    }
-
-const JSON_INPUT = json_input;
-const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT}";
-const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
-const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
-const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
-const AUDIT_NAME = 'rds';
-const TABLES = tables;
-const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
-
-const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
-    let violations = JSON_INPUT.violations;
-    let counterForViolations = 0;
-    let counterForSortedViolations = 0;
-    if (violations.hasOwnProperty('violations')) {
-        violations = JSON_INPUT.violations.violations;
-    }
-    const violationKeys = Object.keys(violations);
-    violationKeys.forEach(violationKey => {
-        const alertKeys = Object.keys(violations[violationKey].violations);
-        alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].region === 'us-east-1') {
-                delete violations[violationKey].violations[alertKey];
-                counterForSortedViolations--;
-                if (Object.keys(violations[violationKey].violations).length === 0) {
-                    delete violations[violationKey];
-                }
-            }
-            counterForViolations++;
-            counterForSortedViolations++;
-        });
-    });
-
-    JSON_INPUT['counterForViolations'] = counterForViolations.toString();
-    JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations.toString();
-    return JSON_INPUT;
-};
-const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
-    let violations = JSON_INPUT.violations;
-    let counterForViolations = 0;
-    let counterForSortedViolations = 0;
-    if (violations.hasOwnProperty('violations')) {
-        violations = JSON_INPUT.violations.violations;
-    }
-    const violationKeys = Object.keys(violations);
-    violationKeys.forEach(violationKey => {
-        const alertKeys = Object.keys(violations[violationKey].violations);
-        alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].region == 'us-east-1') {
-                delete violations[violationKey].violations[alertKey];
-                if (Object.keys(violations[violationKey].violations).length === 0) {
-                    delete violations[violationKey];
-                }
-                counterForSortedViolations--;
-            }
-            counterForViolations++;
-            counterForSortedViolations++;
-        });
-    });
-    JSON_INPUT['counterForViolations'] = counterForViolations;
-    JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations;
-    return JSON_INPUT;
-};
-
-const WHAT_NEED_TO_SHOWN_ON_TABLE = {
-    OBJECT_ID: { headerName: 'AWS Object ID', isShown: true},
-    REGION: { headerName: 'Region', isShown: true },
-    AWS_CONSOLE: { headerName: 'AWS Console', isShown: true },
-    TAGS: { headerName: 'Tags', isShown: true },
-    AMI: { headerName: 'AMI', isShown: false },
-    KILL_SCRIPTS: { headerName: 'Kill Cmd', isShown: false }
-};
-
-const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
-    WHAT_NEED_TO_SHOWN_ON_TABLE, ALLOW_EMPTY, SEND_ON,
-    undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
-
-const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditRDS = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES, TABLES);
-const notifiers = AuditRDS.getNotifiers();
-callback(notifiers);
-  EOH
-end
-
-coreo_uni_util_jsrunner "tags-rollup-rds" do
-  action :run
-  data_type "text"
-  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
-  function <<-EOH
-var rollup_string = "";
-let rollup = '';
-let emailText = '';
-let numberOfViolations = 0;
-for (var entry=0; entry < json_input.length; entry++) {
-    if (json_input[entry]['endpoint']['to'].length) {
-        numberOfViolations += parseInt(json_input[entry]['num_violations']);
-        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
-    }
-}
-
-rollup += 'number of Violations: ' + numberOfViolations + "\\n";
-rollup += 'Rollup' + "\\n";
-rollup += emailText;
-
-rollup_string = rollup;
-callback(rollup_string);
-  EOH
-end
-
-coreo_uni_util_notify "advise-rds-to-tag-values" do
-  action :${AUDIT_AWS_RDS_HTML_REPORT}
-  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
-end
-
-coreo_uni_util_notify "advise-rds-rollup" do
-  action :${AUDIT_AWS_RDS_ROLLUP_REPORT}
-  type 'email'
-  allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
-  send_on '${AUDIT_AWS_RDS_SEND_ON}'
-  payload '
-composite name: PLAN::stack_name
-plan name: PLAN::name
-COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-rds.return
-  '
-  payload_type 'text'
-  endpoint ({
-      :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
-  })
-end
+# coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
+#   action :run
+#   data_type "json"
+#   packages([
+#                {
+#                    :name => "cloudcoreo-jsrunner-commons",
+#                    :version => "1.4.8"
+#                },
+#                {
+#                    :name => "js-yaml",
+#                    :version => "3.7.0"
+#                } ])
+#   json_input '{ "composite name":"PLAN::stack_name",
+#                 "plan name":"PLAN::name",
+#                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
+#   function <<-EOH
+#
+# const fs = require('fs');
+# const yaml = require('js-yaml');
+# let tables;
+# // Get document, or throw exception on error
+#     try {
+#         tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
+#     } catch (e) {
+#         console.log(e);
+#     }
+#
+# const JSON_INPUT = json_input;
+# const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT}";
+# const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
+# const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
+# const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
+# const AUDIT_NAME = 'rds';
+# const TABLES = tables;
+# const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
+#
+# const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
+#     let violations = JSON_INPUT.violations;
+#     let counterForViolations = 0;
+#     let counterForSortedViolations = 0;
+#     if (violations.hasOwnProperty('violations')) {
+#         violations = JSON_INPUT.violations.violations;
+#     }
+#     const violationKeys = Object.keys(violations);
+#     violationKeys.forEach(violationKey => {
+#         const alertKeys = Object.keys(violations[violationKey].violations);
+#         alertKeys.forEach(alertKey => {
+#             if (violations[violationKey].violations[alertKey].region === 'us-east-1') {
+#                 delete violations[violationKey].violations[alertKey];
+#                 counterForSortedViolations--;
+#                 if (Object.keys(violations[violationKey].violations).length === 0) {
+#                     delete violations[violationKey];
+#                 }
+#             }
+#             counterForViolations++;
+#             counterForSortedViolations++;
+#         });
+#     });
+#
+#     JSON_INPUT['counterForViolations'] = counterForViolations.toString();
+#     JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations.toString();
+#     return JSON_INPUT;
+# };
+# const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
+#     let violations = JSON_INPUT.violations;
+#     let counterForViolations = 0;
+#     let counterForSortedViolations = 0;
+#     if (violations.hasOwnProperty('violations')) {
+#         violations = JSON_INPUT.violations.violations;
+#     }
+#     const violationKeys = Object.keys(violations);
+#     violationKeys.forEach(violationKey => {
+#         const alertKeys = Object.keys(violations[violationKey].violations);
+#         alertKeys.forEach(alertKey => {
+#             if (violations[violationKey].violations[alertKey].region == 'us-east-1') {
+#                 delete violations[violationKey].violations[alertKey];
+#                 if (Object.keys(violations[violationKey].violations).length === 0) {
+#                     delete violations[violationKey];
+#                 }
+#                 counterForSortedViolations--;
+#             }
+#             counterForViolations++;
+#             counterForSortedViolations++;
+#         });
+#     });
+#     JSON_INPUT['counterForViolations'] = counterForViolations;
+#     JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations;
+#     return JSON_INPUT;
+# };
+#
+# const WHAT_NEED_TO_SHOWN_ON_TABLE = {
+#     OBJECT_ID: { headerName: 'AWS Object ID', isShown: true},
+#     REGION: { headerName: 'Region', isShown: true },
+#     AWS_CONSOLE: { headerName: 'AWS Console', isShown: true },
+#     TAGS: { headerName: 'Tags', isShown: true },
+#     AMI: { headerName: 'AMI', isShown: false },
+#     KILL_SCRIPTS: { headerName: 'Kill Cmd', isShown: false }
+# };
+#
+# const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
+#     WHAT_NEED_TO_SHOWN_ON_TABLE, ALLOW_EMPTY, SEND_ON,
+#     undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+#
+# const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
+# const AuditRDS = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES, TABLES);
+# const notifiers = AuditRDS.getNotifiers();
+# callback(notifiers);
+#   EOH
+# end
+#
+# coreo_uni_util_jsrunner "tags-rollup-rds" do
+#   action :run
+#   data_type "text"
+#   json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
+#   function <<-EOH
+# var rollup_string = "";
+# let rollup = '';
+# let emailText = '';
+# let numberOfViolations = 0;
+# for (var entry=0; entry < json_input.length; entry++) {
+#     if (json_input[entry]['endpoint']['to'].length) {
+#         numberOfViolations += parseInt(json_input[entry]['num_violations']);
+#         emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+#     }
+# }
+#
+# rollup += 'number of Violations: ' + numberOfViolations + "\\n";
+# rollup += 'Rollup' + "\\n";
+# rollup += emailText;
+#
+# rollup_string = rollup;
+# callback(rollup_string);
+#   EOH
+# end
+#
+# coreo_uni_util_notify "advise-rds-to-tag-values" do
+#   action :${AUDIT_AWS_RDS_HTML_REPORT}
+#   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
+# end
+#
+# coreo_uni_util_notify "advise-rds-rollup" do
+#   action :${AUDIT_AWS_RDS_ROLLUP_REPORT}
+#   type 'email'
+#   allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
+#   send_on '${AUDIT_AWS_RDS_SEND_ON}'
+#   payload '
+# composite name: PLAN::stack_name
+# plan name: PLAN::name
+# COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-rds.return
+#   '
+#   payload_type 'text'
+#   endpoint ({
+#       :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
+#   })
+# end
 =begin
   AWS RDS END
 =end
