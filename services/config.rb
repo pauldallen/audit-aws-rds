@@ -179,7 +179,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                   ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "tables": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-tables,
+                "tables": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-tables.return,
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
