@@ -308,65 +308,104 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.3.9"
-               }       ])
+                   :version => "1.4.7"
+               },
+               {
+                   :name => "js-yaml",
+                   :version => "3.7.0"
+               } ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
   
-const JSON = json_input;
+const fs = require('fs');
+const yaml = require('js-yaml');
+let tables;
+// Get document, or throw exception on error
+    try {
+        tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
+    } catch (e) {
+        console.log(e);
+    }
+
+const JSON_INPUT = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT}";
 const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
 const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
-const AUDIT_NAME = 'rds';
+const TABLES = tables;
+const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
-const ARE_KILL_SCRIPTS_SHOWN = false;
-const EC2_LOGIC = ''; // you can choose 'and' or 'or';
-const EXPECTED_TAGS = ['example_2', 'example_1'];
-
-const WHAT_NEED_TO_SHOWN = {
-    OBJECT_ID: {
-        headerName: 'AWS Object ID',
-        isShown: true,
-    },
-    REGION: {
-        headerName: 'Region',
-        isShown: true,
-    },
-    AWS_CONSOLE: {
-        headerName: 'AWS Console',
-        isShown: true,
-    },
-    TAGS: {
-        headerName: 'Tags',
-        isShown: true,
-    },
-    AMI: {
-        headerName: 'AMI',
-        isShown: false,
-    },
-    KILL_SCRIPTS: {
-        headerName: 'Kill Cmd',
-        isShown: false,
+const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
+    let violations = JSON_INPUT.violations;
+    let counterForViolations = 0;
+    let counterForSortedViolations = 0;
+    if (violations.hasOwnProperty('violations')) {
+        violations = JSON_INPUT.violations.violations;
     }
+    const violationKeys = Object.keys(violations);
+    violationKeys.forEach(violationKey => {
+        const alertKeys = Object.keys(violations[violationKey].violations);
+        alertKeys.forEach(alertKey => {
+            if (violations[violationKey].violations[alertKey].region === 'us-east-1') {
+                delete violations[violationKey].violations[alertKey];
+                counterForSortedViolations--;
+                if (Object.keys(violations[violationKey].violations).length === 0) {
+                    delete violations[violationKey];
+                }
+            }
+            counterForViolations++;
+            counterForSortedViolations++;
+        });
+    });
+
+    JSON_INPUT['counterForViolations'] = counterForViolations.toString();
+    JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations.toString();
+    return JSON_INPUT;
+};
+const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
+    let violations = JSON_INPUT.violations;
+    let counterForViolations = 0;
+    let counterForSortedViolations = 0;
+    if (violations.hasOwnProperty('violations')) {
+        violations = JSON_INPUT.violations.violations;
+    }
+    const violationKeys = Object.keys(violations);
+    violationKeys.forEach(violationKey => {
+        const alertKeys = Object.keys(violations[violationKey].violations);
+        alertKeys.forEach(alertKey => {
+            if (violations[violationKey].violations[alertKey].region == 'us-east-1') {
+                delete violations[violationKey].violations[alertKey];
+                if (Object.keys(violations[violationKey].violations).length === 0) {
+                    delete violations[violationKey];
+                }
+                counterForSortedViolations--;
+            }
+            counterForViolations++;
+            counterForSortedViolations++;
+        });
+    });
+    JSON_INPUT['counterForViolations'] = counterForViolations;
+    JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations;
+    return JSON_INPUT;
 };
 
-const VARIABLES = {
-    NO_OWNER_EMAIL,
-    OWNER_TAG,
-    AUDIT_NAME,
-    ARE_KILL_SCRIPTS_SHOWN,
-    EC2_LOGIC,
-    EXPECTED_TAGS,
-    WHAT_NEED_TO_SHOWN,
-    ALLOW_EMPTY,
-    SEND_ON
+const WHAT_NEED_TO_SHOWN_ON_TABLE = {
+    OBJECT_ID: { headerName: 'AWS Object ID', isShown: true},
+    REGION: { headerName: 'Region', isShown: true },
+    AWS_CONSOLE: { headerName: 'AWS Console', isShown: true },
+    TAGS: { headerName: 'Tags', isShown: true },
+    AMI: { headerName: 'AMI', isShown: false },
+    KILL_SCRIPTS: { headerName: 'Kill Cmd', isShown: false }
 };
+
+const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
+    WHAT_NEED_TO_SHOWN_ON_TABLE, ALLOW_EMPTY, SEND_ON,
+    undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
-const AuditRDS = new CloudCoreoJSRunner(JSON, VARIABLES);
+const AuditRDS = new CloudCoreoJSRunner(JSON, VARIABLES, TABLES);
 const notifiers = AuditRDS.getNotifiers();
 callback(notifiers);
   EOH
