@@ -175,16 +175,11 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                {
                    :name => "cloudcoreo-jsrunner-commons",
                    :version => "1.4.9"
-               },
-               {
-                   :name => "fs"
-               },
-               {
-                   :name => "js-yaml",
-                   :version => "3.7.0"
-               } ])
+               }
+                  ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
+                "tables": "COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-tables"
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
@@ -197,7 +192,7 @@ const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
 const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
 const AUDIT_NAME = 'rds';
-const TABLES = undefined;
+const TABLES = json_input['tables'];
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
 const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
