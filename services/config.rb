@@ -135,6 +135,8 @@ coreo_uni_util_jsrunner "jsrunner-process-tables" do
     } catch (e) {
         console.log(e);
     }
+
+    coreoExport('tables', JSON.stringify(tables));
     callback(tables);
   EOH
 end
