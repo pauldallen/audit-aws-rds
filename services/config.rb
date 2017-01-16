@@ -322,18 +322,28 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
+const tables = {
+    "rds-short-backup-retention-period": {
+        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+",
+        "AWS Tags": "+__OBJECT__.tags+",
+        "Trail Name": "+__OBJECT__+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+#/configuration/+__OBJECT__.violations.__RULE__.violating_object.0.object.trail_arn+"
+    },
+    "rds-no-auto-minor-version-upgrade": {
+        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.category+",
+        "AWS Tags": "+__OBJECT__.tags+"
+    },
+    "rds-db-publicly-accessible": {
+        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+",
+        "AWS Tags": "+__OBJECT__.tags+"
+    },
+    "rds-inventory": {
+        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.category+",
+        "AWS Tags": "+__OBJECT__.tags+"
+    }
+};
 
-const fs = require('fs');
-const yaml = require('js-yaml');
 
-try {
-    var tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
-    console.log(tables);
-} catch (e) {
-    console.log(e);
-}
 
-tables = tables["tables"];
 const JSON_INPUT = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT}";
 const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
@@ -416,52 +426,52 @@ const notifiers = AuditRDS.getNotifiers();
 callback(notifiers);
   EOH
 end
-#
-# coreo_uni_util_jsrunner "tags-rollup-rds" do
-#   action :run
-#   data_type "text"
-#   json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
-#   function <<-EOH
-# var rollup_string = "";
-# let rollup = '';
-# let emailText = '';
-# let numberOfViolations = 0;
-# for (var entry=0; entry < json_input.length; entry++) {
-#     if (json_input[entry]['endpoint']['to'].length) {
-#         numberOfViolations += parseInt(json_input[entry]['num_violations']);
-#         emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
-#     }
-# }
-#
-# rollup += 'number of Violations: ' + numberOfViolations + "\\n";
-# rollup += 'Rollup' + "\\n";
-# rollup += emailText;
-#
-# rollup_string = rollup;
-# callback(rollup_string);
-#   EOH
-# end
-#
-# coreo_uni_util_notify "advise-rds-to-tag-values" do
-#   action :${AUDIT_AWS_RDS_HTML_REPORT}
-#   notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
-# end
-#
-# coreo_uni_util_notify "advise-rds-rollup" do
-#   action :${AUDIT_AWS_RDS_ROLLUP_REPORT}
-#   type 'email'
-#   allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
-#   send_on '${AUDIT_AWS_RDS_SEND_ON}'
-#   payload '
-# composite name: PLAN::stack_name
-# plan name: PLAN::name
-# COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-rds.return
-#   '
-#   payload_type 'text'
-#   endpoint ({
-#       :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
-#   })
-# end
+
+coreo_uni_util_jsrunner "tags-rollup-rds" do
+  action :run
+  data_type "text"
+  json_input 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
+  function <<-EOH
+var rollup_string = "";
+let rollup = '';
+let emailText = '';
+let numberOfViolations = 0;
+for (var entry=0; entry < json_input.length; entry++) {
+    if (json_input[entry]['endpoint']['to'].length) {
+        numberOfViolations += parseInt(json_input[entry]['num_violations']);
+        emailText += "recipient: " + json_input[entry]['endpoint']['to'] + " - " + "nViolations: " + json_input[entry]['num_violations'] + "\\n";
+    }
+}
+
+rollup += 'number of Violations: ' + numberOfViolations + "\\n";
+rollup += 'Rollup' + "\\n";
+rollup += emailText;
+
+rollup_string = rollup;
+callback(rollup_string);
+  EOH
+end
+
+coreo_uni_util_notify "advise-rds-to-tag-values" do
+  action :${AUDIT_AWS_RDS_HTML_REPORT}
+  notifiers 'COMPOSITE::coreo_uni_util_jsrunner.tags-to-notifiers-array-rds.return'
+end
+
+coreo_uni_util_notify "advise-rds-rollup" do
+  action :${AUDIT_AWS_RDS_ROLLUP_REPORT}
+  type 'email'
+  allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
+  send_on '${AUDIT_AWS_RDS_SEND_ON}'
+  payload '
+composite name: PLAN::stack_name
+plan name: PLAN::name
+COMPOSITE::coreo_uni_util_jsrunner.tags-rollup-rds.return
+  '
+  payload_type 'text'
+  endpoint ({
+      :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
+  })
+end
 =begin
   AWS RDS END
 =end
