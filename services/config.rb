@@ -372,7 +372,7 @@ const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
     violationKeys.forEach(violationKey => {
         const alertKeys = Object.keys(violations[violationKey].violations);
         alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].category == 'us-east-1') {
+            if (violations[violationKey].violations[alertKey].category == 'Internal') {
                 delete violations[violationKey].violations[alertKey];
                 if (Object.keys(violations[violationKey].violations).length === 0) {
                     delete violations[violationKey];
