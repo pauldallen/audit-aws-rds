@@ -321,7 +321,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
 
 const fs = require('fs');
 const yaml = require('js-yaml');
-const tables = yaml.safeLoad(fs.readFileSync('../tables.yaml', 'utf8'));
+const tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
 
 const JSON_INPUT = json_input;
 const NO_OWNER_EMAIL = "${AUDIT_AWS_RDS_ALERT_RECIPIENT}";
