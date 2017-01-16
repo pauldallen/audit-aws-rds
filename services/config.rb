@@ -159,7 +159,7 @@ EOH
 end
 
 coreo_uni_util_jsrunner "jsrunner-output-table" do
-  action :run
+  action :nothing
   provide_composite_access true
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return'
   packages([
