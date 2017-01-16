@@ -322,7 +322,15 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
+
+
 const fs = require('fs');
+fs.readdir(__dirname, function(err, files) {
+    if (err) return;
+    files.forEach(function(f) {
+        console.log('Files: ' + f);
+    });
+});
 const yaml = require('js-yaml');
 const tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
 
