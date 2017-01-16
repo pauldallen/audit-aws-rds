@@ -158,6 +158,30 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
 EOH
 end
 
+coreo_uni_util_jsrunner "jsrunner-process-tables" do
+  action :run
+  provide_composite_access true
+  json_input 'COMPOSITE::coreo_uni_util_jsrunner.rds-aggregate.return'
+  packages([
+               {
+                   :name => "js-yaml",
+                   :version => "3.7.0"
+               }       ])
+  function <<-EOH
+    var fs = require('fs');
+    var yaml = require('js-yaml');
+
+// Get document, or throw exception on error
+    try {
+        var tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
+        console.log(tables);
+    } catch (e) {
+        console.log(e);
+    }
+    callback(tables);
+  EOH
+end
+
 # coreo_uni_util_jsrunner "jsrunner-output-table" do
 #   action :notify
 #   provide_composite_access true
