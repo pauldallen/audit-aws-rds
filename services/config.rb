@@ -311,8 +311,8 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                    :version => "1.4.8"
                },
                {
-                   :name => "fs",
-                   :version => "3.10.9"
+                   :name => "file-system",
+                   :version => "2"
                },
                {
                    :name => "js-yaml",
