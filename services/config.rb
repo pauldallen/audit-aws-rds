@@ -308,7 +308,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.4.8"
+                   :version => "1.4.9"
                },
                {
                    :name => "fs"
@@ -322,25 +322,6 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
-const tables = {
-    "rds-short-backup-retention-period": {
-        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+",
-        "AWS Tags": "+__OBJECT__.tags+",
-        "Trail Name": "+__OBJECT__+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+#/configuration/+__OBJECT__.violations.__RULE__.violating_object.0.object.trail_arn+"
-    },
-    "rds-no-auto-minor-version-upgrade": {
-        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.category+",
-        "AWS Tags": "+__OBJECT__.tags+"
-    },
-    "rds-db-publicly-accessible": {
-        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.region+",
-        "AWS Tags": "+__OBJECT__.tags+"
-    },
-    "rds-inventory": {
-        "AWS Region": "+__OBJECT__.violations.__RULE__.region+~https://+__OBJECT__.violations.__RULE__.region+.console.aws.amazon.com/cloudtrail/home?region=+__OBJECT__.violations.__RULE__.category+",
-        "AWS Tags": "+__OBJECT__.tags+"
-    }
-};
 
 
 
@@ -350,7 +331,7 @@ const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
 const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
 const AUDIT_NAME = 'rds';
-const TABLES = tables;
+const TABLES = undefined;
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
 const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
@@ -391,7 +372,7 @@ const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
     violationKeys.forEach(violationKey => {
         const alertKeys = Object.keys(violations[violationKey].violations);
         alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].region == 'us-east-1') {
+            if (violations[violationKey].violations[alertKey].category == 'us-east-1') {
                 delete violations[violationKey].violations[alertKey];
                 if (Object.keys(violations[violationKey].violations).length === 0) {
                     delete violations[violationKey];
