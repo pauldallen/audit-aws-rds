@@ -1,5 +1,6 @@
 rds-short-backup-retention-period:
   "RDS Instance": "__OBJECT__~https://console.aws.amazon.com/rds/home?region=+__OBJECT__.violations.__RULE__.region+#dbinstances:id=__OBJECT__;sf=all"
+  "Backup Retention Period": "+__OBJECT__.violations.__RULE__.violating_object.0.object.backup_retention_period+"
   "AWS Region": "+__OBJECT__.violations.__RULE__.region+"
   "AWS Tags": "__TAGS__"
 rds-no-auto-minor-version-upgrade:
