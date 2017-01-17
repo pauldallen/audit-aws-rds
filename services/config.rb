@@ -292,7 +292,7 @@ const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
     violationKeys.forEach(violationKey => {
         const alertKeys = Object.keys(violations[violationKey].violations);
         alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].category == 'Internal') {
+            if (violations[violationKey].violations[alertKey].suppression_expired) {
                 delete violations[violationKey].violations[alertKey];
                 if (Object.keys(violations[violationKey].violations).length === 0) {
                     delete violations[violationKey];
@@ -319,7 +319,7 @@ const WHAT_NEED_TO_SHOWN_ON_TABLE = {
 
 const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
     WHAT_NEED_TO_SHOWN_ON_TABLE, ALLOW_EMPTY, SEND_ON,
-    undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+    undefined, sortFuncForHTMLReport, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
 const AuditRDS = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES, TABLES);
