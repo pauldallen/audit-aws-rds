@@ -292,7 +292,7 @@ const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
     violationKeys.forEach(violationKey => {
         const alertKeys = Object.keys(violations[violationKey].violations);
         alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].suppression_expired) {
+            if (violations[violationKey].violations[alertKey]["suppression_expired"]) {
                 delete violations[violationKey].violations[alertKey];
                 if (Object.keys(violations[violationKey].violations).length === 0) {
                     delete violations[violationKey];
