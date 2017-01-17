@@ -117,7 +117,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
 EOH
 end
 
-coreo_uni_util_jsrunner "jsrunner-process-tables" do
+coreo_uni_util_jsrunner "jsrunner-process-table" do
   action :run
   provide_composite_access true
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.rds-aggregate.return'
@@ -130,12 +130,12 @@ coreo_uni_util_jsrunner "jsrunner-process-tables" do
     var fs = require('fs');
     var yaml = require('js-yaml');
     try {
-        var tables = yaml.safeLoad(fs.readFileSync('./tables.yaml', 'utf8'));
-        console.log(tables);
+        var table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
+        console.log(table);
     } catch (e) {
         console.log(e);
     }
-    callback(tables);
+    callback(table);
   EOH
 end
 
@@ -174,12 +174,12 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.5.0"
+                   :version => "1.5.1"
                }
                   ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "tables": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-tables.return,
+                "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table.return,
                 "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
   function <<-EOH
 
@@ -192,7 +192,7 @@ const OWNER_TAG = "${AUDIT_AWS_RDS_OWNER_TAG}";
 const ALLOW_EMPTY = "${AUDIT_AWS_RDS_ALLOW_EMPTY}";
 const SEND_ON = "${AUDIT_AWS_RDS_SEND_ON}";
 const AUDIT_NAME = 'rds';
-const TABLES = json_input['tables'];
+const TABLES = json_input['table'];
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
 const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
