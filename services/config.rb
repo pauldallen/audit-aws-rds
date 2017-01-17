@@ -113,6 +113,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
   } catch (e) {
       console.log(e);
   }
+  coreoExport('suppression', JSON.stringify(suppression));
   var violations = json_input.violations;
   var result = {};
     var file_date = null;
@@ -207,6 +208,7 @@ coreo_uni_util_jsrunner "jsrunner-process-table" do
     } catch (e) {
         console.log(e);
     }
+    coreoExport('table', JSON.stringify(table));
     callback(table);
   EOH
 end
