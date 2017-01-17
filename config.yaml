@@ -7,6 +7,7 @@ variables:
       - rds-short-backup-retention-period
       - rds-no-auto-minor-version-upgrade
       - rds-db-publicly-accessible
+      - rds-inventory
   AUDIT_AWS_RDS_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifiers. If more than one, separate each with a comma."
     required: true
