@@ -152,7 +152,7 @@ end
   HTML SEND METHOD
 =end
 coreo_uni_util_notify "advise-rds-json" do
-  action :nothing
+  action :notify
   type 'email'
   allow_empty ${AUDIT_AWS_RDS_ALLOW_EMPTY}
   send_on '${AUDIT_AWS_RDS_SEND_ON}'
