@@ -267,60 +267,6 @@ const AUDIT_NAME = 'rds';
 const TABLES = json_input['table'];
 const SHOWN_NOT_SORTED_VIOLATIONS_COUNTER = false;
 
-const sortFuncForViolationAuditPanel = function sortViolationFunc(JSON_INPUT) {
-    let violations = JSON_INPUT.violations;
-    let counterForViolations = 0;
-    let counterForSortedViolations = 0;
-    if (violations.hasOwnProperty('violations')) {
-        violations = JSON_INPUT.violations.violations;
-    }
-    const violationKeys = Object.keys(violations);
-    violationKeys.forEach(violationKey => {
-        const alertKeys = Object.keys(violations[violationKey].violations);
-        alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey].region === 'us-east-1') {
-                delete violations[violationKey].violations[alertKey];
-                counterForSortedViolations--;
-                if (Object.keys(violations[violationKey].violations).length === 0) {
-                    delete violations[violationKey];
-                }
-            }
-            counterForViolations++;
-            counterForSortedViolations++;
-        });
-    });
-
-    JSON_INPUT['counterForViolations'] = counterForViolations.toString();
-    JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations.toString();
-    return JSON_INPUT;
-};
-const sortFuncForHTMLReport = function htmlSortFunc(JSON_INPUT) {
-    let violations = JSON_INPUT.violations;
-    let counterForViolations = 0;
-    let counterForSortedViolations = 0;
-    if (violations.hasOwnProperty('violations')) {
-        violations = JSON_INPUT.violations.violations;
-    }
-    const violationKeys = Object.keys(violations);
-    violationKeys.forEach(violationKey => {
-        const alertKeys = Object.keys(violations[violationKey].violations);
-        alertKeys.forEach(alertKey => {
-            if (violations[violationKey].violations[alertKey]["suppressed"]) {
-                delete violations[violationKey].violations[alertKey];
-                if (Object.keys(violations[violationKey].violations).length === 0) {
-                    delete violations[violationKey];
-                }
-                counterForSortedViolations--;
-            }
-            counterForViolations++;
-            counterForSortedViolations++;
-        });
-    });
-    JSON_INPUT['counterForViolations'] = counterForViolations;
-    JSON_INPUT['counterForSortedViolations'] = counterForSortedViolations;
-    return JSON_INPUT;
-};
-
 const WHAT_NEED_TO_SHOWN_ON_TABLE = {
     OBJECT_ID: { headerName: 'AWS Object ID', isShown: true},
     REGION: { headerName: 'Region', isShown: true },
@@ -332,7 +278,7 @@ const WHAT_NEED_TO_SHOWN_ON_TABLE = {
 
 const VARIABLES = { NO_OWNER_EMAIL, OWNER_TAG, AUDIT_NAME,
     WHAT_NEED_TO_SHOWN_ON_TABLE, ALLOW_EMPTY, SEND_ON,
-    undefined, sortFuncForHTMLReport, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
+    undefined, undefined, SHOWN_NOT_SORTED_VIOLATIONS_COUNTER};
 
 const CloudCoreoJSRunner = require('cloudcoreo-jsrunner-commons');
 const AuditRDS = new CloudCoreoJSRunner(JSON_INPUT, VARIABLES, TABLES);
