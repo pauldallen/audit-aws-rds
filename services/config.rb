@@ -147,8 +147,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
         }
     }
     var rtn = result;
-    result = JSON.stringify(result["violations"])
-    callback(result);
+    callback(result["violations"]);
 EOH
 end
 
@@ -215,7 +214,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
                 "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table.return,
-                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.report}'
+                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.return}'
   function <<-EOH
 
 
