@@ -94,7 +94,7 @@ callback(result);
   EOH
 end
 
-coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
+coreo_uni_util_jsrunner "jsrunner-process-suppression" do
   action :run
   provide_composite_access true
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.rds-aggregate.return'
@@ -106,14 +106,48 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
   function <<-EOH
     var fs = require('fs');
     var yaml = require('js-yaml');
-    let suppressions;
+    let suppression;
     try {
-        suppressions = yaml.safeLoad(fs.readFileSync('./suppressions.yaml', 'utf8'));
-        console.log(suppressions);
+        suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
+        console.log(suppression);
     } catch (e) {
         console.log(e);
     }
-    callback(suppressions);
+    var result = {};
+    result["composite name"] = json_input["composite name"];
+    result["number_of_violations"] = json_input["number_of_violations"];
+    result["plan name"] = json_input["plan name"];
+    result["regions"] = json_input["regions"];
+    result["violations"] = {};
+    for (var violator_id in json_input.violations) {
+        result["violations"][violator_id] = {};
+        result["violations"][violator_id].tags = json_input.violations[violator_id].tags;
+        result["violations"][violator_id].violations = {}
+        //console.log(violator_id);
+        for (var rule_id in json_input.violations[violator_id].violations) {
+            console.log("object " + violator_id + " violates rule " + rule_id);
+            is_violation = true;
+            for (var suppress_rule_id in suppression["suppression"]) {
+                for (var suppress_violator_id in suppression["suppression"][suppress_rule_id]) {
+                    var suppress_obj_id = suppression["suppression"][suppress_rule_id][suppress_violator_id];
+                    console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_obj_id);
+                    if (rule_id === suppress_rule_id) {
+                        console.log("    have a suppression for rule: " + rule_id);
+                        if (violator_id === suppress_obj_id) {
+                            console.log("    *** found violation to suppress: " + suppress_obj_id);
+                            is_violation = false;
+                        }
+                    }
+                }
+            }
+            if (is_violation) {
+                console.log("    +++ not suppressed - including in results");
+                result["violations"][violator_id].violations[rule_id] = json_input.violations[violator_id].violations[rule_id];
+            }
+        }
+    }
+    var rtn = result;
+    callback(result["violations"]);
 EOH
 end
 
@@ -142,7 +176,7 @@ end
 # coreo_uni_util_variables "update-advisor-output" do
 #   action :set
 #   variables([
-#        {'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppressions.return.violations'}
+#        {'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.return.violations'}
 #       ])
 # end
 
@@ -161,7 +195,7 @@ coreo_uni_util_notify "advise-rds-json" do
   "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
   "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
   "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
-  "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report }'
+  "violations": COMPOSITE::coreo_uni_util_notify.jsrunner-process-suppression.report }'
   payload_type "json"
   endpoint ({
       :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
@@ -180,7 +214,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
                 "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table.return,
-                "violations": COMPOSITE::coreo_aws_advisor_rds.advise-rds.report}'
+                "violations": COMPOSITE::coreo_uni_util_notify.jsrunner-process-suppression.report}'
   function <<-EOH
 
 
