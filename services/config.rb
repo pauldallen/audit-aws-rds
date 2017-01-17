@@ -114,7 +114,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppressions" do
         console.log(e);
     }
 
-    coreoExport('tables', JSON.stringify(suppressions));
+    coreoExport('suppressions', JSON.stringify(suppressions));
     callback(suppressions);
 EOH
 end
