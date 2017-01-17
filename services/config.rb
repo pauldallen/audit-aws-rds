@@ -104,50 +104,75 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
                    :version => "3.7.0"
                }       ])
   function <<-EOH
-    var fs = require('fs');
-    var yaml = require('js-yaml');
-    let suppression;
-    try {
-        suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
-        console.log(suppression);
-    } catch (e) {
-        console.log(e);
-    }
-    var result = {};
-    result["composite name"] = json_input["composite name"];
-    result["number_of_violations"] = json_input["number_of_violations"];
-    result["plan name"] = json_input["plan name"];
-    result["regions"] = json_input["regions"];
-    result["violations"] = {};
-    for (var violator_id in json_input.violations) {
-        result["violations"][violator_id] = {};
-        result["violations"][violator_id].tags = json_input.violations[violator_id].tags;
-        result["violations"][violator_id].violations = {}
-        //console.log(violator_id);
-        for (var rule_id in json_input.violations[violator_id].violations) {
-            console.log("object " + violator_id + " violates rule " + rule_id);
-            is_violation = true;
-            for (var suppress_rule_id in suppression) {
-                for (var suppress_violator_id in suppression[suppress_rule_id]) {
-                    var suppress_obj_id = suppression[suppress_rule_id][suppress_violator_id];
-                    console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_obj_id);
-                    if (rule_id === suppress_rule_id) {
-                        console.log("    have a suppression for rule: " + rule_id);
-                        if (violator_id === suppress_obj_id) {
-                            console.log("    *** found violation to suppress: " + suppress_obj_id);
-                            is_violation = false;
-                        }
-                    }
-                }
-            }
-            if (is_violation) {
-                console.log("    +++ not suppressed - including in results");
-                result["violations"][violator_id].violations[rule_id] = json_input.violations[violator_id].violations[rule_id];
-            }
-        }
-    }
-    var rtn = result;
-    callback(result["violations"]);
+  var fs = require('fs');
+  var yaml = require('js-yaml');
+  let suppression;
+  try {
+      suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
+      console.log(suppression);
+  } catch (e) {
+      console.log(e);
+  }
+  var violations = json_input.violations;
+  var result = {};
+  var file_date = null;
+  for (var violator_id in violations) {
+      result[violator_id] = {};
+      result[violator_id].tags = violations[violator_id].tags;
+      result[violator_id].violations = {}
+      for (var rule_id in violations[violator_id].violations) {
+          is_violation = true;
+          result[violator_id].violations[rule_id] = violations[violator_id].violations[rule_id];
+          for (var suppress_rule_id in suppression) {
+              for (var suppress_violator_num in suppression[suppress_rule_id]) {
+                  for (var suppress_violator_id in suppression[suppress_rule_id][suppress_violator_num]) {
+                      file_date = null;
+                      var suppress_obj_id_time = suppression[suppress_rule_id][suppress_violator_num][suppress_violator_id];
+                      if (rule_id === suppress_rule_id) {
+                          if (violator_id === suppress_violator_num) {
+                              var now_date = new Date();
+                              if (suppress_obj_id_time === "") {
+                                  suppress_obj_id_time = new Date();
+                              } else {
+                                  file_date = suppress_obj_id_time;
+                                  suppress_obj_id_time = file_date;
+                              }
+                              var rule_date = new Date(suppress_obj_id_time);
+                              if (isNaN(rule_date.getTime())) {
+                                  rule_date = new Date(0);
+                              }
+                              if (now_date <= rule_date) {
+                                  is_violation = false;
+                                  result[violator_id].violations[rule_id]["suppressed"] = true;
+                                  if (file_date != null) {
+                                      result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
+                                      result[violator_id].violations[rule_id]["suppression_expired"] = false;
+                                  }
+                              }
+                              // console.log(result);
+                              // throw '';
+                          }
+                      }
+                  }
+  
+              }
+          }
+          if (is_violation) {
+  
+              if (file_date !== null) {
+                  result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
+                  result[violator_id].violations[rule_id]["suppression_expired"] = true;
+              } else {
+                  result[violator_id].violations[rule_id]["suppression_expired"] = false;
+              }
+              result[violator_id].violations[rule_id]["suppressed"] = false;
+          }
+      }
+  }
+  
+  var rtn = result;
+  
+  callback(result);
 EOH
 end
 
