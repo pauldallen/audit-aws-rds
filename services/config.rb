@@ -195,7 +195,7 @@ coreo_uni_util_notify "advise-rds-json" do
   "number_of_checks":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_checks",
   "number_of_violations":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_violations",
   "number_violations_ignored":"COMPOSITE::coreo_aws_advisor_rds.advise-rds.number_ignored_violations",
-  "violations": COMPOSITE::coreo_uni_util_notify.jsrunner-process-suppression.report }'
+  "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.report }'
   payload_type "json"
   endpoint ({
       :to => '${AUDIT_AWS_RDS_ALERT_RECIPIENT}', :subject => 'CloudCoreo rds advisor alerts on PLAN::stack_name :: PLAN::name'
@@ -214,7 +214,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
                 "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table.return,
-                "violations": COMPOSITE::coreo_uni_util_notify.jsrunner-process-suppression.report}'
+                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.report}'
   function <<-EOH
 
 
