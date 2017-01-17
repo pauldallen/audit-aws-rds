@@ -127,9 +127,9 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
         for (var rule_id in json_input.violations[violator_id].violations) {
             console.log("object " + violator_id + " violates rule " + rule_id);
             is_violation = true;
-            for (var suppress_rule_id in suppression["suppression"]) {
-                for (var suppress_violator_id in suppression["suppression"][suppress_rule_id]) {
-                    var suppress_obj_id = suppression["suppression"][suppress_rule_id][suppress_violator_id];
+            for (var suppress_rule_id in suppression) {
+                for (var suppress_violator_id in suppression[suppress_rule_id]) {
+                    var suppress_obj_id = suppression[suppress_rule_id][suppress_violator_id];
                     console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_obj_id);
                     if (rule_id === suppress_rule_id) {
                         console.log("    have a suppression for rule: " + rule_id);
