@@ -109,9 +109,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
   let suppression;
   try {
       suppression = yaml.safeLoad(fs.readFileSync('./suppression.yaml', 'utf8'));
-      console.log(suppression);
   } catch (e) {
-      console.log(e);
   }
   coreoExport('suppression', JSON.stringify(suppression));
   var violations = json_input.violations;
@@ -121,9 +119,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
         result[violator_id] = {};
         result[violator_id].tags = violations[violator_id].tags;
         result[violator_id].violations = {}
-        //console.log(violator_id);
         for (var rule_id in violations[violator_id].violations) {
-            console.log("object " + violator_id + " violates rule " + rule_id);
             is_violation = true;
  
             result[violator_id].violations[rule_id] = violations[violator_id].violations[rule_id];
@@ -132,9 +128,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
                     for (var suppress_violator_id in suppression[suppress_rule_id][suppress_violator_num]) {
                         file_date = null;
                         var suppress_obj_id_time = suppression[suppress_rule_id][suppress_violator_num][suppress_violator_id];
-                        console.log(" compare: " + rule_id + ":" + violator_id + " <> " + suppress_rule_id + ":" + suppress_violator_id);
                         if (rule_id === suppress_rule_id) {
-                            console.log("    have a suppression for rule: " + rule_id);
  
                             if (violator_id === suppress_violator_id) {
                                 var now_date = new Date();
@@ -147,13 +141,11 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
                                 }
                                 var rule_date = new Date(suppress_obj_id_time);
                                 if (isNaN(rule_date.getTime())) {
-                                    console.log("invalid date, setting expiration to time zero");
                                     rule_date = new Date(0);
                                 }
  
                                 if (now_date <= rule_date) {
  
-                                    console.log("    *** found violation to suppress: " + violator_id);
                                     is_violation = false;
  
                                     result[violator_id].violations[rule_id]["suppressed"] = true;
@@ -169,7 +161,6 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
                 }
             }
             if (is_violation) {
-                console.log("    +++ not suppressed");
  
                 if (file_date !== null) {
                     result[violator_id].violations[rule_id]["suppressed_until"] = file_date;
@@ -204,9 +195,7 @@ coreo_uni_util_jsrunner "jsrunner-process-table" do
     var yaml = require('js-yaml');
     try {
         var table = yaml.safeLoad(fs.readFileSync('./table.yaml', 'utf8'));
-        console.log(table);
     } catch (e) {
-        console.log(e);
     }
     coreoExport('table', JSON.stringify(table));
     callback(table);
@@ -248,7 +237,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.5.6"
+                   :version => "1.5.7"
                }
                   ])
   json_input '{ "composite name":"PLAN::stack_name",
