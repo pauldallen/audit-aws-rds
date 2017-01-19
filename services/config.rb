@@ -94,7 +94,7 @@ callback(result);
   EOH
 end
 
-coreo_uni_util_jsrunner "jsrunner-process-suppression" do
+coreo_uni_util_jsrunner "jsrunner-process-suppression-rds" do
   action :run
   provide_composite_access true
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.rds-aggregate.return'
@@ -181,7 +181,7 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression" do
 EOH
 end
 
-coreo_uni_util_jsrunner "jsrunner-process-table" do
+coreo_uni_util_jsrunner "jsrunner-process-table-rds" do
   action :run
   provide_composite_access true
   json_input 'COMPOSITE::coreo_uni_util_jsrunner.rds-aggregate.return'
@@ -242,8 +242,8 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
                   ])
   json_input '{ "composite name":"PLAN::stack_name",
                 "plan name":"PLAN::name",
-                "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table.return,
-                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression.return}'
+                "table": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-table-rds.return,
+                "violations": COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-rds.return}'
   function <<-EOH
 
 
