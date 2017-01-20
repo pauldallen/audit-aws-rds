@@ -21,8 +21,8 @@ This repo is designed to work with CloudCoreo. It will monitor RDS against best 
 ## Required variables with default
 
 ### `AUDIT_AWS_RDS_ALERT_LIST`:
-  * description: Which alerts would you like to check for? (Default is all RDS alerts)
-  * default: rds-short-backup-retention-period, rds-no-auto-minor-version-upgrade, rds-db-publicly-accessible
+  * description: Which alerts would you like to check for? Default is all RDS alerts.
+  * default: rds-short-backup-retention-period, rds-no-auto-minor-version-upgrade, rds-db-publicly-accessible, rds-inventory
 
 ### `AUDIT_AWS_RDS_ALLOW_EMPTY`:
   * description: Would you like to receive empty reports? Options - true / false. Default is false.
@@ -33,22 +33,22 @@ This repo is designed to work with CloudCoreo. It will monitor RDS against best 
   * default: change
 
 ### `AUDIT_AWS_RDS_REGIONS`:
-  * description: List of AWS regions to check. Default is us-east-1,us-west-1,us-west-2.
+  * description: List of AWS regions to check. Default is us-east-1,us-east-2,us-west-1,us-west-2,eu-west-1.
   * default: us-east-1, us-east-2, us-west-1, us-west-2, eu-west-1
 
 ### `AUDIT_AWS_RDS_ROLLUP_REPORT`:
-  * description: Would you like to send a Summary ELB report? Options - notify / nothing. Default is no / nothing.
+  * description: Would you like to send a rollup RDS report? This is a short email that summarizes the number of checks performed and the number of violations found. Options - notify / nothing. Default is nothing.
   * default: nothing
 
 ### `AUDIT_AWS_RDS_HTML_REPORT`:
-  * description: notify or nothing
+  * description: Would you like to send a full RDS report? This is an email that details any violations found and includes a list of the violating cloud objects. Options - notify / nothing. Default is notify.
   * default: notify
 
 
 ## Optional variables with default
 
 ### `AUDIT_AWS_RDS_OWNER_TAG`:
-  * description: Enter an AWS tag whose value is an email address of owner of the ELB object. (Optional)
+  * description: Enter an AWS tag whose value is an email address of owner of the RDS object. (Optional)
   * default: NOT_A_TAG
 
 
