@@ -1,3 +1,7 @@
+###########################################
+# User Visible Rule Definitions
+###########################################
+
 coreo_aws_advisor_alert "rds-inventory" do
   action :define
   service :rds
@@ -62,6 +66,11 @@ coreo_aws_advisor_alert "rds-db-publicly-accessible" do
   alert_when [true]
   id_map "object.db_instances.db_instance_identifier"
 end
+
+###########################################
+# Compsite-Internal Resources follow until end
+#   (Resources used by the system for execution and display processing)
+###########################################
 
 coreo_aws_advisor_rds "advise-rds" do
   alerts ${AUDIT_AWS_RDS_ALERT_LIST}
