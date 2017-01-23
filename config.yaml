@@ -10,7 +10,7 @@ variables:
       - rds-inventory
   AUDIT_AWS_RDS_ALERT_RECIPIENT:
     description: "Enter the email address(es) that will receive notifiers. If more than one, separate each with a comma."
-    required: true
+    required: false
     type: string
     default:
   AUDIT_AWS_RDS_ALLOW_EMPTY:
@@ -42,7 +42,7 @@ variables:
       description: "Would you like to send a full RDS report? This is an email that details any violations found and includes a list of the violating cloud objects. Options - notify / nothing. Default is notify."
       required: true
       type: string
-      default: "notify"
+      default: "nothing"
   AUDIT_AWS_RDS_OWNER_TAG:
       description: "Enter an AWS tag whose value is an email address of owner of the RDS object. (Optional)"
       required: false
