@@ -39,7 +39,7 @@ variables:
       type: string
       default: "nothing"
   AUDIT_AWS_RDS_HTML_REPORT:
-      description: "Would you like to send a full RDS report? This is an email that details any violations found and includes a list of the violating cloud objects. Options - notify / nothing. Default is notify."
+      description: "Would you like to send a full RDS report? This is an email that details any violations found and includes a list of the violating cloud objects. Options - notify / nothing. Default is nothing."
       required: true
       type: string
       default: "nothing"
