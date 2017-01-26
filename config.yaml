@@ -1,7 +1,7 @@
 variables:
   AUDIT_AWS_RDS_ALERT_LIST:
     description: "Which alerts would you like to check for? Default is all RDS alerts."
-    required: true
+    required: false
     type: array
     default:
       - rds-short-backup-retention-period
