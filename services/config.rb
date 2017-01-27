@@ -182,6 +182,13 @@ coreo_uni_util_jsrunner "jsrunner-process-suppression-rds" do
 EOH
 end
 
+coreo_uni_util_variables "rds-for-suppression-update-advisor-output" do
+  action :set
+  variables([
+                {'COMPOSITE::coreo_aws_advisor_rds.advise-rds.report' => 'COMPOSITE::coreo_uni_util_jsrunner.jsrunner-process-suppression-rds.return'}
+            ])
+end
+
 coreo_uni_util_jsrunner "jsrunner-process-table-rds" do
   action :run
   provide_composite_access true
@@ -209,7 +216,7 @@ coreo_uni_util_jsrunner "tags-to-notifiers-array-rds" do
   packages([
                {
                    :name => "cloudcoreo-jsrunner-commons",
-                   :version => "1.6.6"
+                   :version => "1.6.9"
                }
                   ])
   json_input '{ "composite name":"PLAN::stack_name",
